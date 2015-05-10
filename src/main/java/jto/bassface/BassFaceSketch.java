@@ -27,7 +27,7 @@ public class BassFaceSketch extends PApplet {
     private Filters filters;
 
     public static void main(String[] args) {
-        PApplet.main(new String[]{BassFaceSketch.class.getName()});
+        PApplet.main(new String[]{"--full-screen", "--display=2", "--present", BassFaceSketch.class.getName() });
     }
 
     public int getImageWidth() {
