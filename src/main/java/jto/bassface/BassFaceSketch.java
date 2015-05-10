@@ -80,14 +80,14 @@ public class BassFaceSketch extends PApplet {
         noTint();
         image(leftovers, 0, 0);
 
-        if (keyPressed) {
-            receive(new byte[]{(byte) ((int) random(0, 127))}, "127.0.0.1", 5202);
-        }
+//        if (keyPressed) {
+//            receive(new byte[]{(byte) ((int) random(0, 127))}, "127.0.0.1", 5202);
+//        }
     }
 
-    public void mousePressed() {
-        saveFrame((int) random(Integer.MAX_VALUE) + ".png");
-    }
+//    public void mousePressed() {
+//        saveFrame((int) random(Integer.MAX_VALUE) + ".png");
+//    }
 
     private void buildLeftovers(PImage currentImage) {
         currentImage.loadPixels();
