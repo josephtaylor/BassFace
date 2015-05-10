@@ -1,6 +1,7 @@
 package jto.bassface.filter;
 
 import com.google.common.collect.Lists;
+import processing.core.PApplet;
 import processing.core.PImage;
 
 import java.util.Collections;
@@ -9,12 +10,16 @@ import java.util.List;
 /**
  * Created by joconnor on 5/9/15.
  */
-public class BlockShuffle implements Filter {
+public class BlockShuffle extends AbstractFilter {
 
     public static final int X_DIVISIONS = 3;
     public static final int Y_DIVISIONS = 3;
 
     List<PImage> subImages;
+
+    public BlockShuffle(PApplet parent) {
+        super(parent);
+    }
 
     public void filter(PImage dest, PImage source) {
         int blockWidth = source.width / X_DIVISIONS;
@@ -31,6 +36,10 @@ public class BlockShuffle implements Filter {
                 dest.set(x, y, subImages.get(imageIndex++));
             }
         }
+    }
+
+    public FilterType filterType() {
+        return FilterType.STATIC;
     }
 
     private void setupSubImages(PImage source, int blockWidth, int blockHeight) {

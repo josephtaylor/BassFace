@@ -20,7 +20,12 @@ public class FilterTester extends PApplet {
         PImage image = loadImage(new File(Resources.getResource("re__DSC0035.JPG").getPath()).getAbsolutePath());
         PImage dest = new PImage(image.width, image.height);
 
-        Filters.forName("LineShifter").filter(dest, image);
+        BassFaceSketch bassFaceSketch = new BassFaceSketch();
+        bassFaceSketch.setImageWidth(image.width);
+        bassFaceSketch.setImageHeight(image.height);
+        Filters filters = new Filters(bassFaceSketch);
+
+        filters.forName("RandomDots").filter(dest, image);
         //image(image, 0, 0);
         image(dest, 0, 0);
     }

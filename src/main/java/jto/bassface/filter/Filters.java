@@ -1,6 +1,7 @@
 package jto.bassface.filter;
 
 import com.google.common.collect.Lists;
+import processing.core.PApplet;
 
 import java.util.List;
 
@@ -9,21 +10,22 @@ import java.util.List;
  */
 public class Filters {
 
-    private static final List<Filter> FILTERS;
-    private static final int LIST_SIZE;
+    private final List<Filter> filters;
+    private final int listSize;
 
 
-    static {
-        FILTERS = Lists.newArrayList();
-        FILTERS.add(new BlockShuffle());
-        FILTERS.add(new BlockShifter());
-        FILTERS.add(new LineShifter());
+    public Filters(PApplet parent) {
+        filters = Lists.newArrayList();
+        filters.add(new BlockShuffle(parent));
+        filters.add(new BlockShifter(parent));
+        filters.add(new LineShifter(parent));
+        filters.add(new RandomDots(parent));
 
-        LIST_SIZE = FILTERS.size();
+        listSize = filters.size();
     }
 
-    public static Filter forName(String name) {
-        for (Filter filter : FILTERS) {
+    public Filter forName(String name) {
+        for (Filter filter : filters) {
             if (filter.getClass().getSimpleName().equals(name)) {
                 return filter;
             }
@@ -31,11 +33,11 @@ public class Filters {
         throw new IllegalArgumentException("No filter exists with the name: " + name);
     }
 
-    public static Filter get(int index) {
-        return FILTERS.get(index);
+    public Filter get(int index) {
+        return filters.get(index);
     }
 
-    public static Filter random() {
-        return FILTERS.get((int) (Math.random() * (double) FILTERS.size()));
+    public Filter random() {
+        return filters.get((int) (Math.random() * (double) filters.size()));
     }
 }

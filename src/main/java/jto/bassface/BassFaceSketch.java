@@ -2,6 +2,7 @@ package jto.bassface;
 
 import hypermedia.net.UDP;
 import jto.bassface.filter.Filter;
+import jto.bassface.filter.FilterType;
 import jto.bassface.filter.Filters;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -12,23 +13,37 @@ import java.util.List;
  * Created by joconnor on 5/3/15.
  */
 public class BassFaceSketch extends PApplet {
+
+    private int imageWidth;
+    private int imageHeight;
     private UDP udp;
     private PImage leftovers;
     private PImage filteredImage;
-
     private int currentImageListIndex = 0;
     private int currentImageIndex = 0;
     private int previousMidiNote = 0;
     private List<List<PImage>> imageLists;
     private Filter currentFilter;
-
-    private static class Range {
-        public int low;
-        public int high;
-    }
+    private Filters filters;
 
     public static void main(String[] args) {
         PApplet.main(new String[]{BassFaceSketch.class.getName()});
+    }
+
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public int getImageHeight() {
+        return imageHeight;
+    }
+
+    public void setImageHeight(int imageHeight) {
+        this.imageHeight = imageHeight;
     }
 
     @Override
@@ -51,6 +66,11 @@ public class BassFaceSketch extends PApplet {
             leftovers.pixels[i] = color(255, 255, 255, 0);
         }
         leftovers.updatePixels();
+
+        this.imageWidth = first.width;
+        this.imageHeight = first.height;
+
+        filters = new Filters(this);
     }
 
     public void receive(byte[] data, String ip, int port) {
@@ -72,6 +92,9 @@ public class BassFaceSketch extends PApplet {
         PImage currentImage = imageLists.get(currentImageListIndex).get(currentImageIndex);
         tint(255, 50);
         if (null != currentFilter) {
+            if (FilterType.MOVING.equals(currentFilter.filterType())) {
+                currentFilter.filter(filteredImage, currentImage);
+            }
             image(filteredImage, 0, 0);
         } else {
             image(currentImage, 0, 0);
@@ -80,14 +103,10 @@ public class BassFaceSketch extends PApplet {
         noTint();
         image(leftovers, 0, 0);
 
-//        if (keyPressed) {
-//            receive(new byte[]{(byte) ((int) random(0, 127))}, "127.0.0.1", 5202);
-//        }
+        if (keyPressed) {
+            receive(new byte[]{(byte) ((int) random(0, 127))}, "127.0.0.1", 5202);
+        }
     }
-
-//    public void mousePressed() {
-//        saveFrame((int) random(Integer.MAX_VALUE) + ".png");
-//    }
 
     private void buildLeftovers(PImage currentImage) {
         currentImage.loadPixels();
@@ -106,13 +125,22 @@ public class BassFaceSketch extends PApplet {
         leftovers.updatePixels();
     }
 
+//    public void mousePressed() {
+//        saveFrame((int) random(Integer.MAX_VALUE) + ".png");
+//    }
+
     private void updateFilter() {
         float rand = random(1);
         if (rand < 0.2f) {
-            currentFilter = Filters.random();
+            currentFilter = filters.random();
             currentFilter.filter(filteredImage, imageLists.get(currentImageListIndex).get(currentImageIndex));
             return;
         }
         currentFilter = null;
+    }
+
+    private static class Range {
+        public int low;
+        public int high;
     }
 }
