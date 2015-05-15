@@ -1,6 +1,8 @@
 package jto.bassface;
 
 import com.google.common.io.Resources;
+import jto.bassface.filter.Filter;
+import jto.bassface.filter.FilterType;
 import jto.bassface.filter.Filters;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -12,22 +14,32 @@ import java.io.File;
  */
 public class FilterTester extends PApplet {
 
+    Filters filters;
+    PImage image;
+    PImage dest;
+    Filter filter;
+
     @Override
     public void setup() {
         size(800, 600);
         background(255);
 
-        PImage image = loadImage(new File(Resources.getResource("re__DSC0035.JPG").getPath()).getAbsolutePath());
-        PImage dest = new PImage(image.width, image.height);
+        image = loadImage(new File(Resources.getResource("re__DSC0035.JPG").getPath()).getAbsolutePath());
+        dest = new PImage(image.width, image.height);
 
-        BassFaceSketch bassFaceSketch = new BassFaceSketch();
-        bassFaceSketch.setImageWidth(image.width);
-        bassFaceSketch.setImageHeight(image.height);
-        Filters filters = new Filters(bassFaceSketch);
+        filters = new Filters(this);
+        filter = filters.forName("ColorShiftBlocks");
 
-        filters.forName("RandomDots").filter(dest, image);
+        filter.filter(dest, image);
         //image(image, 0, 0);
         image(dest, 0, 0);
+    }
+
+    public void draw() {
+        if (FilterType.MOVING.equals(filter.filterType())) {
+            filter.filter(dest, dest);
+            image(dest, 0, 0);
+        }
     }
 
     public static void main(String[] args) {

@@ -25,6 +25,7 @@ public class BassFaceSketch extends PApplet {
     private List<List<PImage>> imageLists;
     private Filter currentFilter;
     private Filters filters;
+    private boolean displayLeftovers = false;
 
     public static void main(String[] args) {
         PApplet.main(new String[]{"--full-screen", "--display=2", "--present", BassFaceSketch.class.getName() });
@@ -80,7 +81,11 @@ public class BassFaceSketch extends PApplet {
             currentImageIndex = (int) random(imageLists.get(currentImageListIndex).size());
             return;
         }
+
+
         buildLeftovers(imageLists.get(currentImageListIndex).get(currentImageIndex));
+
+
         currentImageListIndex = (int) random(imageLists.size());
         currentImageIndex = (int) random(imageLists.get(currentImageListIndex).size());
         updateFilter();
@@ -90,9 +95,11 @@ public class BassFaceSketch extends PApplet {
     @Override
     public void draw() {
         PImage currentImage = imageLists.get(currentImageListIndex).get(currentImageIndex);
-        tint(255, 50);
+        //tint(255, 50);
         if (null != currentFilter) {
             if (FilterType.MOVING.equals(currentFilter.filterType())) {
+                currentFilter.filter(filteredImage, filteredImage);
+            } else if (FilterType.MOVING_RANDOM.equals(currentFilter.filterType())) {
                 currentFilter.filter(filteredImage, currentImage);
             }
             image(filteredImage, 0, 0);
@@ -101,7 +108,9 @@ public class BassFaceSketch extends PApplet {
         }
 
         noTint();
-        image(leftovers, 0, 0);
+        if (displayLeftovers) {
+            image(leftovers, 0, 0);
+        }
 
         if (keyPressed) {
             receive(new byte[]{(byte) ((int) random(0, 127))}, "127.0.0.1", 5202);
@@ -109,6 +118,11 @@ public class BassFaceSketch extends PApplet {
     }
 
     private void buildLeftovers(PImage currentImage) {
+        if (random(1) > 0.7f) {
+            displayLeftovers = false;
+            return;
+        }
+        displayLeftovers = true;
         currentImage.loadPixels();
         leftovers.loadPixels();
         Range range = new Range();
@@ -131,7 +145,7 @@ public class BassFaceSketch extends PApplet {
 
     private void updateFilter() {
         float rand = random(1);
-        if (rand < 0.2f) {
+        if (rand < 0.4f) {
             currentFilter = filters.random();
             currentFilter.filter(filteredImage, imageLists.get(currentImageListIndex).get(currentImageIndex));
             return;

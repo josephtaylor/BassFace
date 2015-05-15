@@ -20,6 +20,8 @@ public class Filters {
         filters.add(new BlockShifter(parent));
         filters.add(new LineShifter(parent));
         filters.add(new RandomDots(parent));
+        filters.add(new ColorShift(parent));
+        filters.add(new ColorShiftBlocks(parent));
 
         listSize = filters.size();
     }
